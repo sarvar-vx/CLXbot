@@ -15,6 +15,8 @@ class AdminConfig:
 
 class DatabaseConfig:
     DB_URL = getenv("DB_URL")
+    POSTGRES_USER = getenv("POSTGRES_USER")
+    POSTGRES_DB = getenv("POSTGRES_DB")
 
 
 class ENV:

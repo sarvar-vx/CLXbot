@@ -8,7 +8,7 @@ from apps.handlers.forcefollow import check_subscription
 from apps.getenv import ENV
 from database.requests import add_user, get_products_by_type
 from services.forwarder import forward_product
-from services.logger import log_new_user
+
 
 section_router = Router()
 
@@ -18,7 +18,6 @@ section_router = Router()
 @section_router.message(CommandStart())
 async def start_handler(message: Message, bot: Bot, session: AsyncSession) -> None:
     await add_user(session, message.from_user.id, message.from_user.username, message.from_user.full_name)
-    await log_new_user(bot, message.from_user.id, message.from_user.full_name, message.from_user.username)
     unsubscribed = await check_subscription(bot, message.from_user.id, session)
 
     if not unsubscribed:
@@ -85,7 +84,7 @@ async def back_handler(message: Message) -> None:
 
 # About handler
 # ----------------------------------------------------------------------------------------------------------------------
-@section_router.message(F.text == "ℹ️ Biz haqimizda")
+@section_router.message(F.text == "ℹ️ Bot haqida")
 async def about_handler(message: Message) -> None:
     await message.answer(
         "🤖 <b>CLX Bot</b>\n\n"
@@ -96,7 +95,9 @@ async def about_handler(message: Message) -> None:
         "⚡️ Tez, qulay va bepul!\n\n"
         "👨‍💻 <b>Dasturchi:</b> @sarvar_vx\n"
         "📢 <b>Kanal:</b> @CLXlive\n"
-        "📅 <b>Versiya:</b> 1.0.0"
+        "📅 <b>Versiya:</b> 1.0.3\n\n"
+        "<i>Powered by CLX Studio ⚡️</i>",
+        parse_mode="HTML"
     )
 
 
@@ -126,4 +127,4 @@ async def product_handler(message: Message, bot: Bot, session: AsyncSession) -> 
 
     success = await forward_product(bot, message.from_user.id, message.from_user.username, message.text, ENV.bot.CHANNEL_ID, session)
     if not success:
-        await message.answer("❌ Iltimos tugmalardan foydalaning!")
+        await message.answer("❌ Bunaqa dastur topilmadi!")

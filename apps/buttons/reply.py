@@ -6,7 +6,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 def main_menu() -> ReplyKeyboardMarkup:
     buttons = [
         [KeyboardButton(text="💻 Dasturlar"), KeyboardButton(text="🎮 O'yinlar")],
-        [KeyboardButton(text="🧲 Torrent"), KeyboardButton(text="ℹ️ Biz haqimizda")],
+        [KeyboardButton(text="🧲 Torrent"), KeyboardButton(text="ℹ️ Bot haqida")],
         [KeyboardButton(text="👨‍💻 Admin bilan bog'lanish")],
     ]
     return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
@@ -15,7 +15,12 @@ def main_menu() -> ReplyKeyboardMarkup:
 # Programs menu
 # ----------------------------------------------------------------------------------------------------------------------
 async def programs_menu(products: list) -> ReplyKeyboardMarkup:
-    buttons = [[KeyboardButton(text=p.name)] for p in products]
+    buttons = []
+    for i in range(0, len(products), 2):
+        row = [KeyboardButton(text=products[i].name)]
+        if i + 1 < len(products):
+            row.append(KeyboardButton(text=products[i + 1].name))
+        buttons.append(row)
     buttons.append([KeyboardButton(text="🔙 Orqaga")])
     return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
 
@@ -23,7 +28,12 @@ async def programs_menu(products: list) -> ReplyKeyboardMarkup:
 # Games menu
 # ----------------------------------------------------------------------------------------------------------------------
 async def games_menu(products: list) -> ReplyKeyboardMarkup:
-    buttons = [[KeyboardButton(text=p.name)] for p in products]
+    buttons = []
+    for i in range(0, len(products), 2):
+        row = [KeyboardButton(text=products[i].name)]
+        if i + 1 < len(products):
+            row.append(KeyboardButton(text=products[i + 1].name))
+        buttons.append(row)
     buttons.append([KeyboardButton(text="🔙 Orqaga")])
     return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
 
@@ -31,7 +41,12 @@ async def games_menu(products: list) -> ReplyKeyboardMarkup:
 # Torrent menu
 # ----------------------------------------------------------------------------------------------------------------------
 async def torrent_menu(products: list) -> ReplyKeyboardMarkup:
-    buttons = [[KeyboardButton(text=p.name)] for p in products]
+    buttons = []
+    for i in range(0, len(products), 2):
+        row = [KeyboardButton(text=products[i].name)]
+        if i + 1 < len(products):
+            row.append(KeyboardButton(text=products[i + 1].name))
+        buttons.append(row)
     buttons.append([KeyboardButton(text="🔙 Orqaga")])
     return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
 
