@@ -3,11 +3,13 @@ import os
 import subprocess
 from datetime import datetime, timezone, timedelta
 from aiogram import Bot
+from aiogram.types import BufferedInputFile
 from apps.getenv import ENV
 
 BACKUP_CHANNEL = -1003911807536
 
 UZB = timedelta(hours=5)
+
 
 def now() -> str:
     return datetime.now(timezone.utc).astimezone(timezone(UZB)).strftime("%d.%m.%Y %H:%M")
@@ -31,7 +33,7 @@ async def make_backup(bot: Bot) -> None:
         with open(filepath, "rb") as f:
             await bot.send_document(
                 BACKUP_CHANNEL,
-                document=f,
+                document=BufferedInputFile(f.read(), filename=filename),
                 caption=f"🗄 <b>Backup</b>\n📅 {now()}"
             )
 
