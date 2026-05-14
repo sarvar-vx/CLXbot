@@ -126,7 +126,7 @@ async def about_handler(message: Message) -> None:
         "⚡️ Tez, qulay va bepul!\n\n"
         "👨‍💻 <b>Dasturchi:</b> @sarvar_vx\n"
         "📢 <b>Kanal:</b> @CLXlive\n"
-        "📅 <b>Versiya:</b> 1.0.3\n\n"
+        "📅 <b>Versiya:</b> 1.1.0\n\n"
         "<i>Powered by CLX Studio ⚡️</i>",
         parse_mode="HTML"
     )
