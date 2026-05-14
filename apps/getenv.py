@@ -6,7 +6,9 @@ load_dotenv()
 class BotConfig:
     BOT_TOKEN = getenv("BOT_TOKEN")
     CHANNEL_ID = getenv("CHANNEL_ID")
-    FORWARDER_CHANNEL = getenv("FORWARDER_CHANNEL")
+    LOG_CHANNEL = getenv("LOG_CHANNEL")
+    BACKUP_CHANNEL = getenv("BACKUP_CHANNEL")
+    FEEDBACK_CHANNEL = getenv("FEEDBACK_CHANNEL")
 
 
 class AdminConfig:

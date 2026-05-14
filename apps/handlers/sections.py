@@ -1,5 +1,6 @@
 from aiogram import Router, F, Bot
 from aiogram.filters import CommandStart
+from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from sqlalchemy.ext.asyncio import AsyncSession
 from apps.buttons.inline import force_channels
@@ -8,6 +9,7 @@ from apps.handlers.forcefollow import check_subscription
 from apps.getenv import ENV
 from database.requests import add_user, get_products_by_type
 from services.forwarder import forward_product
+from apps.states import FeedbackState
 
 
 section_router = Router()
@@ -73,6 +75,35 @@ async def games_handler(message: Message, session: AsyncSession) -> None:
 async def torrent_handler(message: Message, session: AsyncSession) -> None:
     products = await get_products_by_type(session, "torrent")
     await message.answer("Torrentlar:", reply_markup=await torrent_menu(products))
+
+
+# Feedback handler
+# ----------------------------------------------------------------------------------------------------------------------
+@section_router.message(F.text == "💬 Fikrizni qoldiring!")
+async def feedback_handler(message: Message, state: FSMContext) -> None:
+    await message.answer("💬 Bot yoki boshqa mavzuda o'z fikrizni qoldiring...")
+    await state.set_state(FeedbackState.feedback_message)
+
+@section_router.message(FeedbackState.feedback_message, F.text)
+async def get_feedback_handler(message: Message, state: FSMContext):
+    await message.forward(chat_id=ENV.bot.FEEDBACK_CHANNEL)
+    await message.answer("Raxmat, fikriz biz uchun muhim 🙌", reply_markup=main_menu())
+    await state.clear()
+
+
+# Download Guide handler
+# ----------------------------------------------------------------------------------------------------------------------
+@section_router.message(F.text == "📑 Qo'llanma")
+async def guide_handler(message: Message, bot: Bot) -> None:
+    message_ids = [1214, 1215, 1216, 1217, 1218, 1219]
+    user_id = message.from_user.id
+
+    for message_id in message_ids:
+        await bot.forward_message(
+            chat_id=user_id,
+            from_chat_id=ENV.bot.CHANNEL_ID,
+            message_id=message_id
+        )
 
 
 # Back handler

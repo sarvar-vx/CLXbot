@@ -6,7 +6,7 @@ from aiogram import Bot
 from aiogram.types import BufferedInputFile
 from apps.getenv import ENV
 
-BACKUP_CHANNEL = -1003911807536
+BACKUP_CHANNEL = ENV.bot.BACKUP_CHANNEL
 
 UZB = timedelta(hours=5)
 

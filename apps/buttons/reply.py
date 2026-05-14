@@ -6,7 +6,8 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 def main_menu() -> ReplyKeyboardMarkup:
     buttons = [
         [KeyboardButton(text="💻 Dasturlar"), KeyboardButton(text="🎮 O'yinlar")],
-        [KeyboardButton(text="🧲 Torrent"), KeyboardButton(text="ℹ️ Bot haqida")],
+        [KeyboardButton(text="🧲 Torrent"), KeyboardButton(text="💬 Fikrizni qoldiring!")],
+        [KeyboardButton(text="📑 Qo'llanma"), KeyboardButton(text="ℹ️ Bot haqida")],
         [KeyboardButton(text="👨‍💻 Admin bilan bog'lanish")],
     ]
     return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)

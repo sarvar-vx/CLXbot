@@ -4,7 +4,7 @@ from datetime import datetime, timezone, timedelta
 from aiogram import Bot
 from apps.getenv import ENV
 
-LOG_CHANNEL = ENV.bot.FORWARDER_CHANNEL
+LOG_CHANNEL = ENV.bot.LOG_CHANNEL
 UZB = timedelta(hours=5)
 
 
