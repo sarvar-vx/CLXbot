@@ -2,7 +2,8 @@ from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-from apps.buttons.reply import admin_menu
+from apps.buttons.reply import main_menu
+
 
 cancel_router = Router()
 
@@ -14,4 +15,4 @@ async def cancel_handler(message: Message, state: FSMContext) -> None:
         await message.answer("❌ Bekor qilish uchun hech narsa yo'q!")
         return
     await state.clear()
-    await message.answer("🚫 Bekor qilindi!", reply_markup=admin_menu())
+    await message.answer("🚫 Bekor qilindi!", reply_markup=main_menu())

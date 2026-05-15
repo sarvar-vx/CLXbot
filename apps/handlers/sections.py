@@ -1,7 +1,7 @@
 from aiogram import Router, F, Bot
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from sqlalchemy.ext.asyncio import AsyncSession
 from apps.buttons.inline import force_channels
 from apps.buttons.reply import main_menu, programs_menu, games_menu, torrent_menu
@@ -18,7 +18,8 @@ section_router = Router()
 # Start handler
 # ----------------------------------------------------------------------------------------------------------------------
 @section_router.message(CommandStart())
-async def start_handler(message: Message, bot: Bot, session: AsyncSession) -> None:
+async def start_handler(message: Message, bot: Bot, session: AsyncSession, state: FSMContext) -> None:
+    await state.clear()
     await add_user(session, message.from_user.id, message.from_user.username, message.from_user.full_name)
     unsubscribed = await check_subscription(bot, message.from_user.id, session)
 
@@ -56,7 +57,8 @@ async def check_sub_callback(callback: CallbackQuery, bot: Bot, session: AsyncSe
 # Programs handler
 # ----------------------------------------------------------------------------------------------------------------------
 @section_router.message(F.text == "💻 Dasturlar")
-async def programs_handler(message: Message, session: AsyncSession) -> None:
+async def programs_handler(message: Message, session: AsyncSession, state: FSMContext) -> None:
+    await state.clear()
     products = await get_products_by_type(session, "software")
     await message.answer("Dasturlar:", reply_markup=await programs_menu(products))
 
@@ -64,7 +66,8 @@ async def programs_handler(message: Message, session: AsyncSession) -> None:
 # Games handler
 # ----------------------------------------------------------------------------------------------------------------------
 @section_router.message(F.text == "🎮 O'yinlar")
-async def games_handler(message: Message, session: AsyncSession) -> None:
+async def games_handler(message: Message, session: AsyncSession, state: FSMContext) -> None:
+    await state.clear()
     products = await get_products_by_type(session, "game")
     await message.answer("O'yinlar:", reply_markup=await games_menu(products))
 
@@ -72,30 +75,18 @@ async def games_handler(message: Message, session: AsyncSession) -> None:
 # Torrent handler
 # ----------------------------------------------------------------------------------------------------------------------
 @section_router.message(F.text == "🧲 Torrent")
-async def torrent_handler(message: Message, session: AsyncSession) -> None:
+async def torrent_handler(message: Message, session: AsyncSession, state: FSMContext) -> None:
+    await state.clear()
     products = await get_products_by_type(session, "torrent")
     await message.answer("Torrentlar:", reply_markup=await torrent_menu(products))
-
-
-# Feedback handler
-# ----------------------------------------------------------------------------------------------------------------------
-@section_router.message(F.text == "💬 Fikrizni qoldiring!")
-async def feedback_handler(message: Message, state: FSMContext) -> None:
-    await message.answer("💬 Bot yoki boshqa mavzuda o'z fikrizni qoldiring...")
-    await state.set_state(FeedbackState.feedback_message)
-
-@section_router.message(FeedbackState.feedback_message, F.text)
-async def get_feedback_handler(message: Message, state: FSMContext):
-    await message.forward(chat_id=ENV.bot.FEEDBACK_CHANNEL)
-    await message.answer("Raxmat, fikriz biz uchun muhim 🙌", reply_markup=main_menu())
-    await state.clear()
 
 
 # Download Guide handler
 # ----------------------------------------------------------------------------------------------------------------------
 @section_router.message(F.text == "📑 Qo'llanma")
-async def guide_handler(message: Message, bot: Bot) -> None:
-    message_ids = [1214, 1215, 1216, 1217, 1218, 1219]
+async def guide_handler(message: Message, bot: Bot, state: FSMContext) -> None:
+    await state.clear()
+    message_ids = [1214, 1215, 1216, 1217, 1218, 1219, 1147]
     user_id = message.from_user.id
 
     for message_id in message_ids:
@@ -106,17 +97,11 @@ async def guide_handler(message: Message, bot: Bot) -> None:
         )
 
 
-# Back handler
-# ----------------------------------------------------------------------------------------------------------------------
-@section_router.message(F.text == "🔙 Orqaga")
-async def back_handler(message: Message) -> None:
-    await message.answer("Asosiy menyu:", reply_markup=main_menu())
-
-
 # About handler
 # ----------------------------------------------------------------------------------------------------------------------
 @section_router.message(F.text == "ℹ️ Bot haqida")
-async def about_handler(message: Message) -> None:
+async def about_handler(message: Message, state: FSMContext) -> None:
+    await state.clear()
     await message.answer(
         "🤖 <b>CLX Bot</b>\n\n"
         "📦 Bu bot orqali siz eng yangi:\n"
@@ -126,7 +111,7 @@ async def about_handler(message: Message) -> None:
         "⚡️ Tez, qulay va bepul!\n\n"
         "👨‍💻 <b>Dasturchi:</b> @sarvar_vx\n"
         "📢 <b>Kanal:</b> @CLXlive\n"
-        "📅 <b>Versiya:</b> 1.1.0\n\n"
+        "📅 <b>Versiya:</b> 1.2.0\n\n"
         "<i>Powered by CLX Studio ⚡️</i>",
         parse_mode="HTML"
     )
@@ -135,7 +120,8 @@ async def about_handler(message: Message) -> None:
 # Contact admin handler
 # ----------------------------------------------------------------------------------------------------------------------
 @section_router.message(F.text == "👨‍💻 Admin bilan bog'lanish")
-async def contact_admin_handler(message: Message) -> None:
+async def contact_admin_handler(message: Message, state: FSMContext) -> None:
+    await state.clear()
     await message.answer(
         "👨‍💻 <b>Admin bilan bog'lanish</b>\n\n"
         "Har qanday savol, taklif yoki muammolar uchun "
@@ -145,13 +131,37 @@ async def contact_admin_handler(message: Message) -> None:
     )
 
 
+# Back handler
+# ----------------------------------------------------------------------------------------------------------------------
+@section_router.message((F.text == "🔙 Orqaga") | (F.text == "/menu"))
+async def back_handler(message: Message, state: FSMContext) -> None:
+    await state.clear()
+    await message.answer("Asosiy menyu:", reply_markup=main_menu())
+
+
+# Feedback handler
+# ----------------------------------------------------------------------------------------------------------------------
+@section_router.message(F.text == "💬 Fikrizni qoldiring!")
+async def feedback_handler(message: Message, state: FSMContext) -> None:
+    await state.clear()
+    await message.answer("💬 Bot yoki boshqa mavzuda o'z fikrizni qoldiring...", reply_markup=ReplyKeyboardRemove())
+    await state.set_state(FeedbackState.feedback_message)
+
+@section_router.message(FeedbackState.feedback_message, F.text)
+async def get_feedback_handler(message: Message, state: FSMContext):
+    await message.forward(chat_id=ENV.bot.FEEDBACK_CHANNEL)
+    await message.answer("Raxmat, fikriz biz uchun muhim 🙌", reply_markup=main_menu())
+    await state.clear()
+
+
 # Product handler
 # ----------------------------------------------------------------------------------------------------------------------
 @section_router.message(F.text)
 async def product_handler(message: Message, bot: Bot, session: AsyncSession) -> None:
     skip_texts = [
         "💻 Dasturlar", "🎮 O'yinlar", "🧲 Torrent",
-        "ℹ️ Biz haqimizda", "👨‍💻 Admin bilan bog'lanish", "🔙 Orqaga"
+        "ℹ️ Bot haqida", "👨‍💻 Admin bilan bog'lanish", "🔙 Orqaga",
+        "💬 Fikrizni qoldiring!", "📑 Qo'llanma"
     ]
     if message.text in skip_texts:
         return
