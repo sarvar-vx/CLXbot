@@ -1,3 +1,4 @@
+import bcrypt
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message
@@ -5,7 +6,6 @@ from aiogram.fsm.context import FSMContext
 from admin.states import Login
 from apps.buttons.reply import admin_menu, main_menu
 from apps.getenv import ENV
-
 login_router = Router()
 
 
@@ -22,8 +22,7 @@ async def login_handler(message: Message, state: FSMContext) -> None:
 @login_router.message(Login.password, F.text)
 async def check_password_handler(message: Message, state: FSMContext) -> None:
     await message.delete()
-
-    if message.text == ENV.admin.ADMIN_PASS:
+    if bcrypt.checkpw(message.text.encode(), ENV.admin.ADMIN_PASS_HASH.encode()):
         await state.set_state(None)
         await message.answer("✅ Xush kelibsiz, Admin!", reply_markup=admin_menu())
     else:

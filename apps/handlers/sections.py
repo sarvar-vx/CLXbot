@@ -111,7 +111,7 @@ async def about_handler(message: Message, state: FSMContext) -> None:
         "⚡️ Tez, qulay va bepul!\n\n"
         "👨‍💻 <b>Dasturchi:</b> @sarvar_vx\n"
         "📢 <b>Kanal:</b> @CLXlive\n"
-        "📅 <b>Versiya:</b> 1.2.0\n\n"
+        "📅 <b>Versiya:</b> 1.2.1\n\n"
         "<i>Powered by CLX Studio ⚡️</i>",
         parse_mode="HTML"
     )

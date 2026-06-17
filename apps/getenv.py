@@ -12,7 +12,7 @@ class BotConfig:
 
 
 class AdminConfig:
-    ADMIN_PASS = getenv("ADMIN_PASS")
+    ADMIN_PASS_HASH = getenv("ADMIN_PASS_HASH")
 
 
 class DatabaseConfig:
